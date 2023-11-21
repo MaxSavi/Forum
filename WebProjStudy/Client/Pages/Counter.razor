@@ -1,0 +1,187 @@
+﻿@page "/counter"
+@using Microsoft.AspNetCore.Components.Web
+@inject IJSRuntime JSRuntime
+@inject HttpClient HttpClient
+ 
+
+<PageTitle>Редактор</PageTitle>
+
+<h1>Редактор форума</h1>
+
+<p role="status">Current count: @currentCount</p>
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<div><textarea  type="text" @bind="item" style="width: 500px; height: 100px; white-space: pre-wrap;"/></div>
+<div>
+    <button class="btn btn-primary" @onclick="GenerateRandomText">Сгенерировать текст</button>
+   @* <button class="btn btn-primary" @onclick="SaveText">Сохранить в файл</button>
+    <button class="btn btn-primary" @onclick="DownloadText">Скачать файл</button>*@
+    <button @onclick="FillWithRandomText">Fill with Random Text</button>
+    <button @onclick="SaveToFile">Save to File</button>
+    <button @onclick="LoadFromFile">Load from File</button>
+    <button @onclick="DeleteFile">Delete File</button>
+</div>
+
+
+@code {
+    public class RandomTextGenerator
+    {
+        private static readonly string[] letters = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "l", "n", "m", "o", "p", "q", "r" };
+
+        public string GenerateRandomText(int numberOfWords)
+        {
+            Random random = new Random();
+            string generatedText = "";
+
+            for (int i = 0; i < numberOfWords; i++)
+            {
+                int randomIndex = random.Next(0, letters.Length);
+                generatedText += letters[randomIndex] + "";
+            }
+
+            return generatedText.Trim();
+        }
+    }
+    private RandomTextGenerator textGenerator = new RandomTextGenerator();
+    private string item { get; set; }
+
+    private void GenerateRandomText()
+    {
+        item = textGenerator.GenerateRandomText(100);
+    }
+
+
+
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+    //private string textInput;
+    //private string savedText;
+
+    //private void SaveTextToFile()
+    //{
+    //    try
+    //    {
+    //        // Путь к файлу на клиентской стороне (в виртуальной файловой системе)
+    //        var filePath = "savedText.txt";
+
+    //        // Записываем текст в файл
+    //        System.IO.File.WriteAllText(filePath, textInput);
+
+    //        // Опционально: обновляем отображаемый текст
+    //        savedText = textInput;
+
+    //        // Опционально: вызываем JavaScript функцию после сохранения текста в файл
+    //        JSRuntime.InvokeVoidAsync("alert", "Текст успешно сохранен в файл!");
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        // Обрабатываем ошибку, если что-то идет не так
+    //        Console.WriteLine($"Ошибка: {ex.Message}");
+    //    }
+    //}
+    //private string textInput;
+    //private string savedText;
+    //private string filePath;
+    //private string downloadStatus = "";
+
+    //private async Task SaveTextToFile()
+    //{
+    //    try
+    //    {
+    //        // Отправляем текст на сервер и получаем путь к файлу
+    //        filePath = await HttpClient.GetStringAsync("/mycomponent/savetexttofileonserver");
+
+    //        // Опционально: обновляем отображаемый текст
+    //        savedText = textInput;
+
+    //        // Опционально: вызываем JavaScript функцию после сохранения текста в файл
+    //        await JSRuntime.InvokeVoidAsync("alert", "Текст успешно сохранен в файл!");
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        // Обрабатываем ошибку, если что-то идет не так
+    //        Console.WriteLine($"Ошибка: {ex.Message}");
+    //    }
+    //}
+
+    //private async Task DownloadFile()
+    //{
+    //    try
+    //    {
+    //        // Обнуляем статус перед загрузкой файла
+    //        downloadStatus = "";
+
+    //        // Отправляем запрос на сервер для скачивания файла
+    //        await HttpClient.GetAsync($"/mycomponent/downloadfile?filePath={filePath}");
+
+    //        // Устанавливаем статус успешной загрузки
+    //        downloadStatus = "Файл успешно скачан";
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        // Обрабатываем ошибку, если что-то идет не так
+    //        Console.WriteLine($"Ошибка: {ex.Message}");
+    //        downloadStatus = "Произошла ошибка при скачивании файла";
+    //    }
+    //}
+    //private string textContent = "";
+
+    //private async Task SaveText()
+    //{
+    //    // Save text to local storage or server (you can modify this logic)
+    //    await JSRuntime.InvokeVoidAsync("localStorage.setItem", "savedText", textContent);
+    //    // You can replace 'localStorage.setItem' with your server-side logic to save the text.
+    //}
+
+    //private async Task DownloadText()
+    //{
+    //    // Download text from local storage or server (you can modify this logic)
+    //    var savedText = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "savedText");
+        
+    //    if (!string.IsNullOrEmpty(savedText))
+    //    {
+    //        var bytes = System.Text.Encoding.UTF8.GetBytes(savedText);
+    //        var base64 = Convert.ToBase64String(bytes);
+    //        await JSRuntime.InvokeVoidAsync("downloadFile", base64, "textFile.txt");
+    //    }
+    //}
+    private string textContent = "";
+
+    private void FillWithRandomText()
+    {
+        textContent = Guid.NewGuid().ToString();
+    }
+
+    private async Task SaveToFile()
+    {
+        await File.WriteAllTextAsync("textFile.txt", textContent);
+    }
+
+    private async Task LoadFromFile()
+    {
+        if (File.Exists("textFile.txt"))
+        {
+            textContent = await File.ReadAllTextAsync("textFile.txt");
+        }
+        else
+        {
+            textContent = "File not found";
+        }
+    }
+
+    private void DeleteFile()
+    {
+        if (File.Exists("textFile.txt"))
+        {
+            File.Delete("textFile.txt");
+            textContent = "File deleted";
+        }
+        else
+        {
+            textContent = "File not found";
+        }
+    }
+}
