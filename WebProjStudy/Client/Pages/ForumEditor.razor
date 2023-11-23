@@ -3,13 +3,13 @@
 <h3>Редактор Форума</h3>
 
 <div>
-    <textarea  type="text" @bind="textContent" style="width: 500px; height: 100px; white-space: pre-wrap;"/>
+    <textarea  type="text" @bind="textContent" style="width: 700px; height: 100px; white-space: pre-wrap;"/>
 
     <br />
-    <button class="btn btn-primary" @onclick="GenerateRandomText">Fill with Random Text</button>
-    <button class="btn btn-primary" @onclick="SaveToFile">Save to File</button>
-    <button class="btn btn-primary" @onclick="LoadFromFile">Load from File</button>
-    <button class="btn btn-primary" @onclick="DeleteFile">Delete File</button>
+    <button class="btn btn-primary" @onclick="GenerateRandomText">Создать рандомный текст</button>
+    <button class="btn btn-primary" @onclick="SaveToFile">Сохранить в файл</button>
+    <button class="btn btn-primary" @onclick="LoadFromFile">Загрузить из файла</button>
+    <button class="btn btn-primary" @onclick="DeleteFile">Удалить файл</button>
 </div>
 
 @code {
